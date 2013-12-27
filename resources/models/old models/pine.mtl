@@ -1,0 +1,11 @@
+# Exported from Wings 3D 1.5.1
+newmtl m
+Ns 0.0
+d 1.0
+illum 2
+Kd 1.0 1.0 1.0
+Ka 1.0 1.0 1.0
+Ks 0.24076 0.24076 0.24076
+Ke 0.09424 0.09424 0.09424
+map_Kd uv.jpg
+

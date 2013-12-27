@@ -1,8 +1,6 @@
 from __future__ import division
 import pyglet
 from pyglet.gl import *
-glEnable(GL_TEXTURE_2D)
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 from math import sin,cos,tan
 import pymunk
 from pymunk import Vec2d
@@ -31,12 +29,14 @@ class Camera(object):
 		self.newAngle 			= 0
 		self.newWeightedScale 	= 180
 		self.newTarget 			= [0,0]
-		self.scale 				= 90
+		self.scale 				= 60
 
 		self.taret 				= (0,0)
 
 		self.scaleRate 			= scale_rate
 		self.rate 				= rate
+		self.vel_zoom 			= 0
+		self.new_vel_zoom 		= 0
 		
 	def update(self, target, angle):
 		#self.target = target
@@ -44,6 +44,8 @@ class Camera(object):
 		self.newPositionX 		= utils.weighted_average(self.newPositionX,target[0],self.rate[0])
 		self.newPositionY 		= utils.weighted_average(self.newPositionY,target[1],self.rate[1])
 		self.newWeightedScale 	= utils.weighted_average(self.newWeightedScale,self.scale,self.scaleRate)
+		
+		self.new_vel_zoom 	= utils.weighted_average(self.new_vel_zoom,self.vel_zoom,20)
 		
 		glViewport(0, 0, self.screen_size[0], self.screen_size[1])
 
@@ -57,7 +59,7 @@ class Camera(object):
 		#glRotatef(self.newAngle,0.0,0.0,1.0)
 		
 		# position of the camera
-		gluLookAt(self.newPositionX, self.newPositionY, +100*self.aspect,
+		gluLookAt(self.newPositionX-self.new_vel_zoom, self.newPositionY+(self.new_vel_zoom*.5), +370,
 				  self.newPositionX, self.newPositionY, 0,
 				  sin(0),1,0.0)
 

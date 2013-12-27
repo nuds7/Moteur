@@ -9,9 +9,9 @@ import contours
 
 class Contour(object):
 	def __init__(self, image_path, space, segment_radius = 3, segment_friction = 1, tolerance = 150):
-		remove_base_points = True
+		remove_base_points = False
 		make_loop = False
-		order_verts = True
+		order_verts = False
 
 		''' # not reduced
 		layers = contours.find_contours(image_path)
@@ -33,21 +33,28 @@ class Contour(object):
 		elasticity = 1
 
 		self.points = []
-
+		'''
 		if order_verts:
 			new_layers = []
 			for layer in layers:
 				new_layers.append(sorted(layer, key=lambda a: a[0]))
 		else:
 			new_layers = layers
-			
+		'''
 		self.points = []
 
-		for layer in new_layers:
+		for layer in layers:
 			i = 0
 			for point in layer:
 				if point == layer[0]:
 					self.points.append(point)
+
+					seg = pymunk.Segment(space.static_body, point, layer[-1], radius)
+					seg.group = 2
+					seg.elasticity = elasticity
+					seg.friction = friction
+					space.add(seg)
+
 				else:
 					seg = pymunk.Segment(space.static_body, point, layer[i-1], radius)
 					seg.group = 2

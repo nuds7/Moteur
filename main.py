@@ -3,8 +3,8 @@ import pyglet
 from pyglet.gl import *
 lib_path = os.path.abspath('libs/')
 sys.path.append(lib_path)
-import scene
-import pyglet_util
+from libs import scene
+from libs import pyglet_util
 import ctypes
 pyglet.resource.path = ['resources/']
 pyglet.resource.path = ['resources/textures']
@@ -22,7 +22,7 @@ class Window(pyglet.window.Window):
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
 
 		self.overlay_batch = pyglet.graphics.Batch()
-		self.ver_label = pyglet.text.Label(text = 'Pyglet & Pymunk',
+		self.ver_label = pyglet.text.Label(text = 'Moteur',
 										   font_name = 'Calibri', font_size = 8, bold = True,
 										   x = self.width, y = self.height,
 										   anchor_x = 'right', anchor_y = 'top',
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 	window = Window(960, 540, 	# 960, 540
 					caption 	= '', 
 					fullscreen 	= False,
-					config 		= smoothConfig,
+					#config 		= smoothConfig,
 					#vsync 		= False
 					)
 	pyglet.app.run()

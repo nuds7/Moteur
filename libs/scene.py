@@ -17,10 +17,11 @@ from heightmap import Contour
 
 import entities
 import utils
-import meshpy
+#import meshpy
 
 import obj_batch
 import ctypes
+import shader
 
 def angle_between_lines(line1, line2):
 	dx1 = line1[1][0] - line1[0][0]
@@ -63,89 +64,6 @@ class GameLevel1(object):
 		
 		'''
 		size = (60,20)
-		mass = .0075
-		box_moment = pymunk.moment_for_box(mass, size[0], size[1])
-		for i in range(5):
-			box_body = pymunk.Body(mass, box_moment)
-			box_body.position = 300,(18+(size[1]*i))
-			
-			box_shape = pymunk.Poly.create_box(box_body, size=size)
-			box_shape.friction = .7
-			box_shape.elasticity = .5
-
-			space.add(box_body, box_shape)
-
-			box_body.sleep()
-		entities.SoftBody(space, (700,100), 70, poly=6, friction=.2)
-		'''
-
-
-	def update_controls(self, keys):
-		self.car.control(keys)
-	def draw(self):
-		pass
-
-def round_trip_connect(start, end):
-	result = []
-	for i in range(start, end):
-	  result.append((i, i+1))
-	result.append((end, start))
-	return result
-
-class GameLevel2(object):
-	def __init__(self):
-		pass
-	def define_level(self, scene):
-		self.scene = scene
-		heightmap = Contour('resources/test3.bmp', scene.space, 
-							tolerance = 400, segment_radius = .5)
-
-		glShadeModel(GL_SMOOTH) # (GL_SMOOTH/GL_FLAT)
-		#glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) # wireframe
-
-		intensity = .2
-		intensity2 = .2
-		r = .1
-		g = .1
-		b = .1
-
-		spread = .2, .2, .2
-
-		fourfv = ctypes.c_float * 4
-
-		glLightfv(GL_LIGHT0, GL_POSITION, fourfv(100, 5000, 200, 1))
-		glLightfv(GL_LIGHT0, GL_AMBIENT, fourfv(spread[0], spread[1], spread[2], intensity))
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, fourfv(r, g, b, intensity))
-		glLightfv(GL_LIGHT0, GL_SPECULAR, fourfv(r, g, b, intensity))
-		
-
-		r2, g2, b2 = .3, .3, .3
-
-		glLightfv(GL_LIGHT1, GL_POSITION, fourfv(0, 0, 0, 1))
-		glLightfv(GL_LIGHT1, GL_AMBIENT, fourfv(r2, g2, b2, intensity2))
-		glLightfv(GL_LIGHT1, GL_DIFFUSE, fourfv(r2, g2, b2, intensity2))
-		glLightfv(GL_LIGHT1, GL_SPECULAR, fourfv(r2, g2, b2, intensity2))
-
-		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
-		glEnable(GL_LIGHT0)
-		#glEnable(GL_LIGHT1)
-		# http://geoffrey.googlecode.com/svn-history/r1/trunk/geoffrey.py
-
-		self.land_batch = pyglet.graphics.Batch()
-
-		o = obj_batch.OBJ.from_resource('testmodel1.obj')
-		o.load_identity()
-		o.scale(100, 100, 100)
-		o.add_to(self.land_batch)
-		'''
-		t = obj_batch.OBJ.from_resource('tree.obj')
-		t.load_identity()
-		t.scale(100, 100, 100)
-		t.add_to(self.land_batch)
-		'''
-
-		'''
-		size = (60,20)
 		mass = .0001
 		box_moment = pymunk.moment_for_box(mass, size[0], size[1])
 		for i in range(5):
@@ -162,7 +80,61 @@ class GameLevel2(object):
 		entities.SoftBody(scene.space, (700,100), 70, poly=6, friction=.2)
 		'''
 
-		self.player = vehicle.Jeep(scene, (100,250))
+	def update_controls(self, keys):
+		self.car.control(keys)
+	def draw(self):
+		pass
+
+class GameLevel2(object):
+	def __init__(self):
+		pass
+	def define_level(self, scene):
+		self.scene = scene
+		heightmap = Contour('resources/levels/test_lvl1.bmp', scene.space, 
+							tolerance = 1000, segment_radius = 2)
+
+		glShadeModel(GL_SMOOTH) # (GL_SMOOTH/GL_FLAT)
+		#glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) # wireframe
+
+		intensity = .1
+		r = .5
+		g = .5
+		b = .5
+
+		spread = .2, .2, .2
+
+		fourfv = ctypes.c_float * 4
+
+		glLightfv(GL_LIGHT0, GL_POSITION, fourfv(100, 1000, 100, 1))
+		glLightfv(GL_LIGHT0, GL_AMBIENT, fourfv(spread[0], spread[1], spread[2], intensity))
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, fourfv(r, g, b, intensity))
+		glLightfv(GL_LIGHT0, GL_SPECULAR, fourfv(r, g, b, intensity))
+
+		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
+		glEnable(GL_LIGHT0)
+		# http://geoffrey.googlecode.com/svn-history/r1/trunk/geoffrey.py
+
+		self.obj_batch = pyglet.graphics.Batch()
+		o = obj_batch.OBJ.from_resource('pine.obj')
+		o.load_identity()
+		o.translate(100,70,-50)
+		s = 50
+		o.scale(s,s,s)
+		o.add_to(self.obj_batch)
+
+		g = obj_batch.OBJ.from_resource('ground.obj')
+		g.load_identity()
+		g.translate(0,0,-30)
+		s = 100
+		g.scale(s,s,s)
+		g.add_to(self.obj_batch)
+
+		# make model textures retain pixelation
+		glEnable(GL_TEXTURE_2D)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+		self.player = vehicle.Jeep(scene, (100,100))
 
 	def update_controls(self, keys):
 		self.player.control(keys)
@@ -170,13 +142,14 @@ class GameLevel2(object):
 	def draw(self):
 		self.player.draw()
 
-		fourfv = ctypes.c_float * 4
-		glLightfv(GL_LIGHT1, GL_POSITION, fourfv(self.player.body.position[0], self.player.body.position[1]+10, 1, 1))
+		if (self.player.body.velocity[0] > -250):
+			self.scene.camera.vel_zoom = self.player.body.velocity[0]*.2
+
 		##
 		glEnable(GL_COLOR_MATERIAL)
 		glEnable(GL_LIGHTING)
 
-		self.land_batch.draw()
+		self.obj_batch.draw()
 
 		glDisable(GL_LIGHTING)
 		##
@@ -238,11 +211,10 @@ class Pymunk_Scene(Scene):
 		self.space.sleep_time_threshold = 1
 		self.space.gravity 				= (0,-800)
 
-		glEnable(GL_BLEND)
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 		#glEnable(GL_LINE_SMOOTH)
 		glPointSize(3)
 		glLineWidth(1) #(1.25)
+		glClearColor(0,0,0,1)
 
 		self.map_size = [1920,1080]
 		self.camera = camera.Camera(self.screen_resolution, 
@@ -277,17 +249,15 @@ class Pymunk_Scene(Scene):
 		self.pymunk_util.update()
 		self.camera.update([self.level.player.body.position[0], self.level.player.body.position[1]], 0)
 
-		glClearColor(0,0,0,1)
-
 		self.camera.set_3d()
 
+		self.debug_batch.draw()
+		
 		self.level.draw()
 
-		self.debug_batch.draw()
 		self.normal_batch.draw()
 
-		self.level.draw()
-
+		self.camera.draw_2d()
 		self.camera.ui_mode()
 		self.ui_batch.draw()
 
@@ -304,9 +274,9 @@ class Pymunk_Scene(Scene):
 		if symbol == pyglet.window.key.ESCAPE:
 			self.manager.go_to(Menu_Scene(self.window, self.level))
 		if symbol == pyglet.window.key.C:
-			self.camera.scale = 120
-		if symbol == pyglet.window.key.X:
 			self.camera.scale = 90
+		if symbol == pyglet.window.key.X:
+			self.camera.scale = 60
 	def on_mouse_press(self, x, y, button, modifiers):
 		self.mouse_interact.on_mouse_press((x,y), button)
 	def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):

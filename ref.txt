@@ -1,0 +1,12 @@
+http://www.pythonstuff.org/glsl/
+
+Models
+http://opengameart.org/content/low-poly-pumpkin
+http://opengameart.org/content/low-poly-objects-landscape
+http://opengameart.org/content/pinguin-low-poly
+http://opengameart.org/content/white-bear-low-poly
+http://opengameart.org/content/low-poly-cacti
+http://opengameart.org/content/wooden-log
+
+Textures
+http://opengameart.org/content/3d-textures

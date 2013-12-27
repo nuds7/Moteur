@@ -187,7 +187,7 @@ class Jeep(object):
 
 		wheel_color = (90,140,190,255)
 
-		radius 				= 8
+		radius 				= 8.5
 		wheel_mass 			= .001 #.01
 		wheel_friction 		= 1.2
 		wheel_elasticity 	= .0
